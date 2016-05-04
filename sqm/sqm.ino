@@ -5,7 +5,8 @@
 //Constants
 int  period = 2000;
 int ScalingFactor = 1;
-float area = 0.0092;
+//float area = 0.0092;
+float area = 0.0136;
 float MagSol = 4.83;
 
 //Variables
