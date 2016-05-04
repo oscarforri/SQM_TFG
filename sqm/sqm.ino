@@ -1,12 +1,12 @@
 //Pin definitions
 # define TSL235 2
-# define LEDpin 13
+////////# define LEDpin 13
 
 //Constants
 int  period = 2000;
 int ScalingFactor = 1;
 float area = 0.0092;
-float MagSol = -26.64;
+float MagSol = 4.83;
 
 //Variables
 unsigned long counter = 0;
@@ -16,7 +16,7 @@ float irradiance;
 long long brillo;
 unsigned long startTime;
 unsigned long currentTime;
-unsigned long des;
+float des;
 
 void setup(){
   Serial.begin(9600);
@@ -27,7 +27,7 @@ void setup(){
 }
 
 void loop(){
-  digitalWrite(LEDpin, HIGH);
+  ////////////digitalWrite(LEDpin, HIGH);
   counter++;
   Serial.print(counter);
   Serial.print(" ");
@@ -36,7 +36,7 @@ void loop(){
   while (currentTime - startTime <= period){
     attachInterrupt(0, count_pulses, RISING);
     }
-  digitalWrite(LEDpin, LOW);
+  //////////digitalWrite(LEDpin, LOW);
   Serial.print("pulses: ");
   Serial.print(";  ");
   Serial.print("frequency: ");
@@ -78,7 +78,7 @@ long getbrillo(){
 
 
 //Calcul MPSAS No funciona be!!!
-long desitjat(){
-  des = - MagSol + 21.57 - 2.5*log(brillo);
+float desitjat(){
+  des = MagSol + 21.57 - 2.5*log10(brillo);
   return des;
 }
