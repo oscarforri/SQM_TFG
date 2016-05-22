@@ -54,7 +54,7 @@ void loop(){
   Serial.println(desitjat(),DEC);
 
   pulses = 0;                                   // Reset the pulses counter for the next measurement
-  delay(1000);
+  delay(100);
 }
 
 void count_pulses(){

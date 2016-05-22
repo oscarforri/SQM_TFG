@@ -1,6 +1,4 @@
 #include "Wire.h"
-//#include <LiquidCrystal.h>
-//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
  
 #define DS1307_ADDRESS 0x68
 byte zero = 0x00; //workaround for issue #527
@@ -75,12 +73,12 @@ void printDate(){
  
   //print the date EG   3/1/11 23:59:59
   Serial.print(0,0);
-  Serial.print(month);
-  Serial.print("/");
   Serial.print(monthDay);
   Serial.print("/");
+  Serial.print(month);
+  Serial.print("/");
   Serial.print(year);
-  Serial.print(0,1);
+  //Serial.print(0,1);
   Serial.print(" ");
   Serial.print(hour);
   Serial.print(":");
