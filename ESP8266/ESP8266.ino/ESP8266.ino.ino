@@ -2,8 +2,8 @@
 SoftwareSerial BT1(3, 2); // RX | TX
 
 void setup()
-  {  Serial.begin(115200);
-     BT1.begin(115200);
+  {  Serial.begin(19200);
+    BT1.begin(19200);
   }
 
 void loop()
