@@ -40,6 +40,7 @@ void setup() {
   Wire.begin();
   setDateTime(); //Iniciem el rellotge amb la hora que hem configurat en aquesta funció.
   last_addr = initial_addr();
+  Serial.print("Starting SQM: ");
 }
 
 void loop() {
@@ -58,9 +59,7 @@ void loop() {
     printDate();
     save_data(monthDay, month, year, hour, minute, t, h, Msq);
   }
-  else {
-    Serial.print("Error de lectura");
-  }
+  
   delay (1000);
 }
 
