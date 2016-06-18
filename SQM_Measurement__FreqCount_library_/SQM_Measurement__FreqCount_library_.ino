@@ -4,7 +4,7 @@
 
 
 #define nsec 30 //Es necesari aquest factor de escala perque el programa calcula per FreqCount.begin(1000);
-#define A 20
+#define A 19
 
 #define DHTPIN 7
 #define DHTTYPE DHT22
@@ -24,6 +24,7 @@ void setup() {
   dht.begin();
   Wire.begin();
   setDateTime(); //Iniciem el rellotge amb la hora que hem configurat en aquesta funció.
+  Serial.println("Comencem a llegir!!");
 }
 
 void loop() {
