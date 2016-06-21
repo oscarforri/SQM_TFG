@@ -8,8 +8,12 @@
 #include <espduino.h>
 #include <mqtt.h>
 
-SoftwareSerial debugPort(2, 3); // RX, TX
-ESP esp(&Serial, &debugPort, 4);
+//SoftwareSerial debugPort(2, 3); // RX, TX
+SoftwareSerial ESP_Port(2, 3); // RX, TX
+
+//ESP esp(&Serial, &debugPort, 4);
+ESP esp(&ESP_Port, &Serial,4);
+
 MQTT mqtt(&esp);
 boolean wifiConnected = false;
 int hum;
@@ -24,7 +28,7 @@ void wifiCb(void* response)
   if(res.getArgc() == 1) {
     res.popArgs((uint8_t*)&status, 4);
     if(status == STATION_GOT_IP) {
-      debugPort.println("WIFI CONNECTED");
+      Serial.println("WIFI CONNECTED");
       mqtt.connect("192.168.1.135", 1883, false);
      //mqtt.connect("192.168.1.36", 1883, false);
       wifiConnected = true;
@@ -39,7 +43,7 @@ void wifiCb(void* response)
 
 void mqttConnected(void* response)
 {
-  debugPort.println("Connected");
+  Serial.println("Connected");
   // mqtt.subscribe("/topic/0"); //or mqtt.subscribe("topic"); /*with qos = 0*/
   // mqtt.subscribe("/topic/1");
   //mqtt.publish("/topic/0", "data0");
@@ -54,13 +58,21 @@ void mqttData(void* response)
 {
   RESPONSE res(response);
   
-  debugPort.print("Received: topic=");
+  Serial.print("Received: topic=");
   String topic = res.popString();
-  debugPort.println(topic);
+  Serial.println(topic);
 
-  debugPort.print("data=");
+  Serial.print("data=");
   String data = res.popString();
-  debugPort.println(data);
+  Serial.println(data);
+
+  if (data == "a"){   //Rebem petició de valor actual
+     Serial.println("Ara enviarem el valor actual");
+  }else if (data == "d"){  //Rebem petició de volcar dades
+     Serial.println("Ara volcarem les dades en memoria");
+  }else if (data == "h"){  //Rebem petició de canviar l'hora
+     Serial.println("Ara canviarem l'hora");
+  }
 
 }
 void mqttPublished(void* response)
@@ -68,23 +80,23 @@ void mqttPublished(void* response)
 
 }
 void setup() {
+  ESP_Port.begin(19200);
   Serial.begin(19200);
-  debugPort.begin(19200);
   esp.enable();
-  Serial.print("voidsetup");
+  ESP_Port.print("voidsetup");
   delay(500);
   esp.reset();
   delay(500);
   while(!esp.ready());
 
-  debugPort.println("ARDUINO: setup mqtt client");
+  Serial.println("ARDUINO: setup mqtt client");
   if(!mqtt.begin("DVES_duino", "admin", "Isb_C4OGD4c3", 120, 1)) {
-    debugPort.println("ARDUINO: fail to setup mqtt");
+    Serial.println("ARDUINO: fail to setup mqtt");
     while(1);
   }
 
 
-  debugPort.println("ARDUINO: setup mqtt lwt");
+  Serial.println("ARDUINO: setup mqtt lwt");
   mqtt.lwt("/lwt", "offline", 0, 0); //or mqtt.lwt("/lwt", "offline");
 
 /*setup mqtt events */
@@ -94,13 +106,12 @@ void setup() {
   mqtt.dataCb.attach(&mqttData);
 
   /*setup wifi*/
-  debugPort.println("ARDUINO: setup wifi");
+  Serial.println("ARDUINO: setup wifi");
   esp.wifiCb.attach(&wifiCb);
 
   esp.wifiConnect("MOVISTAR_DC6A","uhfyPYyejc6CQqjANQGH");
 
-
-  debugPort.println("ARDUINO: system started");
+  Serial.println("ARDUINO: system started");
 }
 
 void loop() {
@@ -114,7 +125,7 @@ void loop() {
      byte month = 6;
      byte year = 16;
 
-     unsigned long freq_mg = 408687512535; //Valor del sensor TSL
+     unsigned long freq_mg = 687512535; //Valor del sensor TSL
      float Magnitut = 21.1358;        //Magnitut calculada
      float humitat = 70.10;         //Humitat
      float temperatura = 25.50;     //Temperatura
@@ -124,7 +135,9 @@ void loop() {
      char message_buff[100];
      String pubString = "{{\"Data\" \"" + String(monthDay) + "/" + String(month) + "/" + String(year) + "\"},{\"Temperatura\" \"" + String(temperatura)+"\"},{\"Humitat\" \"" + String(humitat)+"\"},{\"Magnitut\" \"" + String(Magnitut)+"\"},{\"Freq\" \"" + String(freq_mg)+"\"}";
      pubString.toCharArray(message_buff, pubString.length()+1);
-     mqtt.publish("/topic/envio_actual", message_buff);
+     //mqtt.publish("/topic/datos", message_buff);
+     mqtt.subscribe("topic/demanda");
+       // mqtt.publish("/topic/datos", "de puta mare tio");
      delay(5000);
   }
 }
